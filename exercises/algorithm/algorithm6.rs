@@ -3,8 +3,7 @@
 	This problem requires you to implement a basic DFS traversal
 */
 
-// I AM NOT DONE
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 
 struct Graph {
     adj: Vec<Vec<usize>>, 
@@ -17,20 +16,30 @@ impl Graph {
         }
     }
 
+    // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
         self.adj[src].push(dest);
-        self.adj[dest].push(src); 
+        self.adj[dest].push(src); // Undirected graph
     }
 
+    // Recursive utility for DFS
     fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
-        //TODO
+        visited.insert(v); // Mark the current node as visited
+        visit_order.push(v); // Add the current node to visit order
+        
+        // Visit all adjacent nodes
+        for &neighbor in &self.adj[v] {
+            if !visited.contains(&neighbor) {
+                self.dfs_util(neighbor, visited, visit_order);
+            }
+        }
     }
 
     // Perform a depth-first search on the graph, return the order of visited nodes
     fn dfs(&self, start: usize) -> Vec<usize> {
-        let mut visited = HashSet::new();
-        let mut visit_order = Vec::new(); 
-        self.dfs_util(start, &mut visited, &mut visit_order);
+        let mut visited = HashSet::new(); // Keeps track of visited nodes
+        let mut visit_order = Vec::new(); // Keeps track of the order of visitation
+        self.dfs_util(start, &mut visited, &mut visit_order); // Start DFS from 'start'
         visit_order
     }
 }
@@ -46,7 +55,7 @@ mod tests {
         graph.add_edge(1, 2);
 
         let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2]);
+        assert_eq!(visit_order, vec![0, 1, 2]); // Expected DFS order: 0 -> 1 -> 2
     }
 
     #[test]
@@ -56,10 +65,10 @@ mod tests {
         graph.add_edge(0, 2);
         graph.add_edge(1, 2);
         graph.add_edge(2, 3);
-        graph.add_edge(3, 3); 
+        graph.add_edge(3, 3); // Self-loop at node 3
 
         let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2, 3]);
+        assert_eq!(visit_order, vec![0, 1, 2, 3]); // Expected DFS order: 0 -> 1 -> 2 -> 3
     }
 
     #[test]
@@ -67,12 +76,12 @@ mod tests {
         let mut graph = Graph::new(5);
         graph.add_edge(0, 1);
         graph.add_edge(0, 2);
-        graph.add_edge(3, 4); 
+        graph.add_edge(3, 4); // Disconnected component
 
         let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2]); 
+        assert_eq!(visit_order, vec![0, 1, 2]); // Expected DFS order from node 0: 0 -> 1 -> 2
+        
         let visit_order_disconnected = graph.dfs(3);
-        assert_eq!(visit_order_disconnected, vec![3, 4]); 
+        assert_eq!(visit_order_disconnected, vec![3, 4]); // Expected DFS order from node 3: 3 -> 4
     }
 }
-
