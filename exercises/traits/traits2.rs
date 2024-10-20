@@ -8,13 +8,18 @@
 //
 // Execute `rustlings hint traits2` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 
 trait AppendBar {
     fn append_bar(self) -> Self;
 }
 
-// TODO: Implement trait `AppendBar` for a vector of strings.
+// 为 Vec<String> 实现 AppendBar trait
+impl AppendBar for Vec<String> {
+    fn append_bar(mut self) -> Self {
+        self.push(String::from("Bar")); // 向向量末尾追加 "Bar"
+        self
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -23,7 +28,7 @@ mod tests {
     #[test]
     fn is_vec_pop_eq_bar() {
         let mut foo = vec![String::from("Foo")].append_bar();
-        assert_eq!(foo.pop().unwrap(), String::from("Bar"));
-        assert_eq!(foo.pop().unwrap(), String::from("Foo"));
+        assert_eq!(foo.pop().unwrap(), String::from("Bar")); // 末尾元素应为 "Bar"
+        assert_eq!(foo.pop().unwrap(), String::from("Foo")); // 其次是 "Foo"
     }
 }
